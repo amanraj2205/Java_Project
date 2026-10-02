@@ -1,0 +1,60 @@
+# ===================================================================
+# IDEs & System Files
+# ===================================================================
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+*.swp
+
+# Environment & Secret Files
+.env
+.env.local
+.env.*.local
+
+# ===================================================================
+# Module 1, 2, 5: Java / Spring Boot (devstream-backend)
+# ===================================================================
+devstream-backend/target/
+devstream-backend/bin/
+devstream-backend/.mvn/
+devstream-backend/HELP.md
+*.class
+*.jar
+*.war
+*.ear
+
+# ===================================================================
+# Module 4: Python / FastAPI / LangChain (devstream-ai)
+# ===================================================================
+devstream-ai/__pycache__/
+devstream-ai/*/__pycache__/
+devstream-ai/*/*/__pycache__/
+devstream-ai/venv/
+devstream-ai/.venv/
+devstream-ai/env/
+devstream-ai/.env
+devstream-ai/*.pyc
+devstream-ai/.pytest_cache/
+devstream-ai/*.egg-info/
+
+# ===================================================================
+# Module 3: React / Vite / Tailwind (devstream-frontend)
+# ===================================================================
+devstream-frontend/node_modules/
+devstream-frontend/dist/
+devstream-frontend/dist-ssr/
+devstream-frontend/.vite/
+devstream-frontend/npm-debug.log*
+devstream-frontend/yarn-debug.log*
+devstream-frontend/yarn-error.log*
+devstream-frontend/.pnpm-debug.log*
+
+# ===================================================================
+# Docker & Database Volumes
+# ===================================================================
+postgres_data/
+*.log
