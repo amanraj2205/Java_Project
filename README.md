@@ -102,3 +102,145 @@ The system utilizes a Polyglot Persistence model, routing data to appropriate en
 * [DevStream Architecture]![Project Screenshot](./image/Gemini_Generated_Image_4dvtt54dvtt54dvt.png)
 
 ---
+
+
+## Week 4: Database Design & UI Mock-ups
+
+### 1. Database Architecture & Polyglot Persistence Strategy
+
+DevStream operates on a **Polyglot Persistence Architecture** that routes data to PostgreSQL for transactional identity management and MongoDB Atlas for high-throughput, unstructured article documentation.
+
+#### A. PostgreSQL Relational Database Schema (Identity & Access Management)
+
+* **`users` Table**: Core identity and security credentials.
+  * `id` (`BIGSERIAL`, `PRIMARY KEY`)
+  * `username` (`VARCHAR(50)`, `UNIQUE`, `NOT NULL`)
+  * `email` (`VARCHAR(100)`, `UNIQUE`, `NOT NULL`)
+  * `password` (`VARCHAR(255)`, BCrypt Hash)
+  * `created_at` (`TIMESTAMP`, `DEFAULT CURRENT_TIMESTAMP`)
+
+* **`roles` Table**: Role-Based Access Control definitions.
+  * `id` (`BIGSERIAL`, `PRIMARY KEY`)
+  * `name` (`VARCHAR(30)`, `UNIQUE`) — `ROLE_STUDENT_AUTHOR`, `ROLE_MODERATOR`, `ROLE_GUEST`
+
+* **`user_roles` Join Table**: M-to-N user-role mappings.
+  * `user_id` (`BIGINT`, `FOREIGN KEY` -> `users.id`)
+  * `role_id` (`BIGINT`, `FOREIGN KEY` -> `roles.id`)
+
+* **`developer_portfolios` Table**: Portfolio bio, social handles, and technical skills.
+  * `id` (`BIGSERIAL`, `PRIMARY KEY`)
+  * `user_id` (`BIGINT`, `FOREIGN KEY` -> `users.id`, `UNIQUE`)
+  * `bio` (`TEXT`)
+  * `github_username` (`VARCHAR(100)`)
+  * `avatar_url` (`VARCHAR(500)`)
+  * `location` (`VARCHAR(100)`)
+  * `skills_json` (`JSONB`, `DEFAULT '[]'`)
+
+#### B. MongoDB Atlas Document Database Schema (Content Engine)
+
+* **`articles` Collection**: Unstructured document storage for WYSIWYG HTML, TipTap JSON AST, Markdown, and analytics counters.
+  ```json
+  {
+    "_id": "ObjectId",
+    "title": "String",
+    "slug": "String (Unique Index)",
+    "contentHtml": "String (DOMPurify Sanitized)",
+    "contentJson": "String (TipTap JSON)",
+    "contentMarkdown": "String (Legacy Markdown)",
+    "summary": "String (LangChain AI Summary)",
+    "authorUsername": "String",
+    "tags": ["Array of Strings"],
+    "status": "PUBLISHED | HIDDEN | DRAFT",
+    "viewCount": 0,
+    "createdAt": "ISODate",
+    "updatedAt": "ISODate"
+  }
+  ```
+
+* **`tags` Collection**: Global taxonomy tags.
+  ```json
+  {
+    "_id": "ObjectId",
+    "name": "String (Unique Index)",
+    "description": "String",
+    "usageCount": 0
+  }
+  ```
+
+---
+
+#### C. Entity-Relationship (ER) Diagram
+
+```mermaid
+erDiagram
+    USERS ||--o{ USER_ROLES : "has assigned"
+    ROLES ||--o{ USER_ROLES : "mapped to"
+    USERS ||--|| DEVELOPER_PORTFOLIOS : "owns"
+    USERS ..o{ ARTICLES : "authors (cross-DB reference)"
+    ARTICLES }o--o{ TAGS : "categorized by"
+
+    USERS {
+        bigint id PK
+        string username UK
+        string email UK
+        string password
+        timestamp created_at
+    }
+
+    ROLES {
+        bigint id PK
+        string name UK
+    }
+
+    USER_ROLES {
+        bigint user_id PK, FK
+        bigint role_id PK, FK
+    }
+
+    DEVELOPER_PORTFOLIOS {
+        bigint id PK
+        bigint user_id FK, UK
+        text bio
+        string github_username
+        string avatar_url
+        string location
+        jsonb skills_json
+        timestamp updated_at
+    }
+
+    ARTICLES {
+        objectId _id PK
+        string title
+        string slug UK
+        string contentHtml
+        string contentJson
+        string contentMarkdown
+        string summary
+        string authorUsername FK
+        string_array tags
+        enum status "PUBLISHED|HIDDEN|DRAFT"
+        int viewCount
+        timestamp createdAt
+    }
+
+    TAGS {
+        objectId _id PK
+        string name UK
+        string description
+        int usageCount
+    }
+```
+
+---
+
+### 2. User Interface (UI) Mock-ups
+
+#### A. Moderator Control Center (Queue, Read Article & Moderation Actions)
+Features live queue monitoring, in-app full article reader view with DOMPurify XSS protection, and inline visibility controls (`PUBLISHED`, `HIDDEN`, `DRAFT`).
+
+* [DevStream Moderator Control Center]![Moderator Dashboard](./image/image.png)
+ 
+* [DevStream User Dashboard]![User Dashboard](./image/image%20copy.png)
+
+
+---
