@@ -25,8 +25,14 @@ public class Article {
 
     @Indexed(unique = true)
     private String slug;
+
+    // Rich-text WYSIWYG & legacy raw Markdown persistence
+    private String contentHtml;
+    private String contentJson;
     private String contentMarkdown;
+
     private String summary;
+    private String coverImageUrl;
 
     @Builder.Default
     private List<String> tags = new ArrayList<>();
@@ -57,11 +63,20 @@ public class Article {
     public String getSlug() { return slug; }
     public void setSlug(String slug) { this.slug = slug; }
 
+    public String getContentHtml() { return contentHtml; }
+    public void setContentHtml(String contentHtml) { this.contentHtml = contentHtml; }
+
+    public String getContentJson() { return contentJson; }
+    public void setContentJson(String contentJson) { this.contentJson = contentJson; }
+
     public String getContentMarkdown() { return contentMarkdown; }
     public void setContentMarkdown(String contentMarkdown) { this.contentMarkdown = contentMarkdown; }
 
     public String getSummary() { return summary; }
     public void setSummary(String summary) { this.summary = summary; }
+
+    public String getCoverImageUrl() { return coverImageUrl; }
+    public void setCoverImageUrl(String coverImageUrl) { this.coverImageUrl = coverImageUrl; }
 
     public List<String> getTags() { return tags; }
     public void setTags(List<String> tags) { this.tags = tags; }

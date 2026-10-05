@@ -4,6 +4,7 @@ import com.devstream.identity.dto.AuthResponse;
 import com.devstream.identity.dto.LoginRequest;
 import com.devstream.identity.dto.RegisterRequest;
 import com.devstream.identity.model.Role;
+import com.devstream.identity.model.RoleName;
 import com.devstream.identity.model.User;
 import com.devstream.identity.repository.RoleRepository;
 import com.devstream.identity.repository.UserRepository;
@@ -41,11 +42,22 @@ public class AuthService {
             throw new RuntimeException("Email address is already in use!");
         }
 
-        Role userRole = roleRepository.findByName("ROLE_DEV")
-                .orElseGet(() -> roleRepository.save(Role.builder().name("ROLE_DEV").build()));
+        // Assign specified role (e.g., ROLE_MODERATOR) or default to ROLE_STUDENT_AUTHOR
+        String targetRoleName = RoleName.ROLE_STUDENT_AUTHOR.name();
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            if (request.getRole().toUpperCase().contains("MODERATOR")) {
+                targetRoleName = RoleName.ROLE_MODERATOR.name();
+            } else {
+                targetRoleName = request.getRole().startsWith("ROLE_") ? request.getRole() : "ROLE_" + request.getRole();
+            }
+        }
+
+        final String roleNameToFind = targetRoleName;
+        Role assignedRole = roleRepository.findByName(roleNameToFind)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(roleNameToFind).build()));
 
         Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
+        roles.add(assignedRole);
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -58,11 +70,11 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        String token = tokenProvider.generateTokenForUsername(savedUser.getUsername());
-
         Set<String> roleNames = savedUser.getRoles().stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
+
+        String token = tokenProvider.generateTokenForUsername(savedUser.getUsername(), roleNames);
 
         return AuthResponse.builder()
                 .accessToken(token)

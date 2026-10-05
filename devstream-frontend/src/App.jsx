@@ -1,76 +1,143 @@
-import React, { useState } from 'react';
-import { AuthProvider } from './context/AuthContext';
+import React, { useState, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
+
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
-import { ArticleFeed } from './components/ArticleFeed';
-import { MarkdownEditor } from './components/MarkdownEditor';
-import { PortfolioDashboard } from './components/PortfolioDashboard';
 import { AuthModal } from './components/AuthModal';
-import { ArticleModal } from './components/ArticleModal';
-import { Code2, Database, Cpu, Globe, Server, Sparkles } from 'lucide-react';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { ArticleFeed } from './components/ArticleFeed';
+
+import { Code2, Database, Cpu, Globe, Server } from 'lucide-react';
+
+// Lazy loading heavy components for Code Splitting & Performance
+const MarkdownEditor = lazy(() =>
+  import('./components/MarkdownEditor').then((module) => ({ default: module.MarkdownEditor }))
+);
+const PortfolioDashboard = lazy(() =>
+  import('./components/PortfolioDashboard').then((module) => ({ default: module.PortfolioDashboard }))
+);
+const ModeratorDashboard = lazy(() =>
+  import('./components/ModeratorDashboard').then((module) => ({ default: module.ModeratorDashboard }))
+);
+const ArticleViewPage = lazy(() =>
+  import('./components/ArticleViewPage').then((module) => ({ default: module.ArticleViewPage }))
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes cache
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 function DevStreamContent() {
-  const [activeTab, setActiveTab] = useState('feed'); // 'feed' | 'editor' | 'portfolio'
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [articleModalOpen, setArticleModalOpen] = useState(false);
-
-  const handleOpenArticle = (article) => {
-    setSelectedArticle(article);
-    setArticleModalOpen(true);
-  };
 
   const handleArticleCreated = (newArticle) => {
-    // Navigate to feed and open the new article
-    setSelectedArticle(newArticle);
-    setArticleModalOpen(true);
-    setActiveTab('feed');
+    if (newArticle?.slug) {
+      navigate(`/articles/${newArticle.slug}`);
+    } else {
+      navigate('/feed');
+    }
+  };
+
+  const handleAuthSuccess = (user) => {
+    setAuthModalOpen(false);
+    if (user?.roles?.includes('ROLE_MODERATOR')) {
+      navigate('/moderator');
+    } else {
+      navigate('/feed');
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
       
-      {/* Top Navigation */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenAuth={() => setAuthModalOpen(true)}
-      />
+      {/* Global Toast Notification System */}
+      <Toaster position="top-right" richColors theme="dark" closeButton />
 
-      {/* Main View Router */}
+      {/* Top Navigation Bar */}
+      <Navbar onOpenAuth={() => setAuthModalOpen(true)} />
+
+      {/* Main Semantic Routes View */}
       <main className="flex-1">
-        {activeTab === 'feed' && (
-          <ArticleFeed
-            onSelectArticle={handleOpenArticle}
-            onNavigateToEditor={() => setActiveTab('editor')}
-          />
-        )}
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/feed" replace />} />
+            
+            <Route
+              path="/feed"
+              element={
+                <ArticleFeed
+                  onSelectArticle={(article) => article.slug && navigate(`/articles/${article.slug}`)}
+                />
+              }
+            />
 
-        {activeTab === 'editor' && (
-          <MarkdownEditor
-            onArticleCreated={handleArticleCreated}
-            onOpenAuth={() => setAuthModalOpen(true)}
-          />
-        )}
+            <Route path="/articles/:slug" element={<ArticleViewPage />} />
 
-        {activeTab === 'portfolio' && (
-          <PortfolioDashboard
-            onSelectArticle={handleOpenArticle}
-          />
-        )}
+            <Route
+              path="/editor"
+              element={
+                <MarkdownEditor
+                  onArticleCreated={handleArticleCreated}
+                  onOpenAuth={() => setAuthModalOpen(true)}
+                />
+              }
+            />
+
+            <Route
+              path="/editor/:slug"
+              element={
+                <MarkdownEditor
+                  onArticleCreated={handleArticleCreated}
+                  onOpenAuth={() => setAuthModalOpen(true)}
+                />
+              }
+            />
+
+            <Route
+              path="/portfolio"
+              element={<Navigate to={`/portfolio/${currentUser?.username || 'alex_dev'}`} replace />}
+            />
+
+            <Route
+              path="/portfolio/:username"
+              element={
+                <PortfolioDashboard
+                  onSelectArticle={(article) => article.slug && navigate(`/articles/${article.slug}`)}
+                />
+              }
+            />
+
+            <Route
+              path="/moderator"
+              element={
+                <ProtectedRoute allowedRoles={['ROLE_MODERATOR']}>
+                  <ModeratorDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Catch-all fallback */}
+            <Route path="*" element={<Navigate to="/feed" replace />} />
+          </Routes>
+        </Suspense>
       </main>
 
-      {/* Auth Modal (JWT Login & Registration) */}
+      {/* Auth Modal */}
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={() => setAuthModalOpen(false)}
-      />
-
-      {/* Article Reader Modal */}
-      <ArticleModal
-        article={selectedArticle}
-        isOpen={articleModalOpen}
-        onClose={() => setArticleModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
       />
 
       {/* Modern Developer Platform Footer */}
@@ -119,8 +186,13 @@ function DevStreamContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <DevStreamContent />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <DevStreamContent />
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
+

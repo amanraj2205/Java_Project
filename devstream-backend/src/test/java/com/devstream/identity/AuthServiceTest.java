@@ -4,6 +4,7 @@ import com.devstream.identity.dto.AuthResponse;
 import com.devstream.identity.dto.LoginRequest;
 import com.devstream.identity.dto.RegisterRequest;
 import com.devstream.identity.model.Role;
+import com.devstream.identity.model.RoleName;
 import com.devstream.identity.model.User;
 import com.devstream.identity.repository.RoleRepository;
 import com.devstream.identity.repository.UserRepository;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +58,7 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
-        testRole = Role.builder().id(1L).name("ROLE_DEV").build();
+        testRole = Role.builder().id(1L).name(RoleName.ROLE_STUDENT_AUTHOR.name()).build();
 
         testUser = User.builder()
                 .id(100L)
@@ -82,14 +84,14 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Should successfully register a new user and generate JWT token")
+    @DisplayName("Should successfully register a new student author and generate JWT token")
     void testRegisterSuccess() {
         when(userRepository.existsByUsername("dev_user")).thenReturn(false);
         when(userRepository.existsByEmail("dev@devstream.io")).thenReturn(false);
-        when(roleRepository.findByName("ROLE_DEV")).thenReturn(Optional.of(testRole));
+        when(roleRepository.findByName(RoleName.ROLE_STUDENT_AUTHOR.name())).thenReturn(Optional.of(testRole));
         when(passwordEncoder.encode("raw_secret")).thenReturn("encoded_secret");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
-        when(tokenProvider.generateTokenForUsername("dev_user")).thenReturn("mocked.jwt.token");
+        when(tokenProvider.generateTokenForUsername(eq("dev_user"), any())).thenReturn("mocked.jwt.token");
 
         AuthResponse response = authService.register(registerRequest);
 
@@ -97,7 +99,7 @@ class AuthServiceTest {
         assertEquals("mocked.jwt.token", response.getAccessToken());
         assertEquals("dev_user", response.getUsername());
         assertEquals("dev@devstream.io", response.getEmail());
-        assertTrue(response.getRoles().contains("ROLE_DEV"));
+        assertTrue(response.getRoles().contains(RoleName.ROLE_STUDENT_AUTHOR.name()));
 
         verify(userRepository, times(1)).save(any(User.class));
     }
@@ -129,6 +131,6 @@ class AuthServiceTest {
         assertEquals("mocked.jwt.login.token", response.getAccessToken());
         assertEquals("dev_user", response.getUsername());
         assertEquals("dev@devstream.io", response.getEmail());
-        assertTrue(response.getRoles().contains("ROLE_DEV"));
+        assertTrue(response.getRoles().contains(RoleName.ROLE_STUDENT_AUTHOR.name()));
     }
 }

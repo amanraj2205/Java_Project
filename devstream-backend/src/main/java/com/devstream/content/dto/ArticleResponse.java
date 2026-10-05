@@ -17,8 +17,11 @@ public class ArticleResponse {
     private String authorUsername;
     private String title;
     private String slug;
+    private String contentHtml;
+    private String contentJson;
     private String contentMarkdown;
     private String summary;
+    private String coverImageUrl;
     private List<String> tags;
     private ArticleStatus status;
     private Integer readTimeMinutes;
@@ -41,11 +44,20 @@ public class ArticleResponse {
     public String getSlug() { return slug; }
     public void setSlug(String slug) { this.slug = slug; }
 
+    public String getContentHtml() { return contentHtml; }
+    public void setContentHtml(String contentHtml) { this.contentHtml = contentHtml; }
+
+    public String getContentJson() { return contentJson; }
+    public void setContentJson(String contentJson) { this.contentJson = contentJson; }
+
     public String getContentMarkdown() { return contentMarkdown; }
     public void setContentMarkdown(String contentMarkdown) { this.contentMarkdown = contentMarkdown; }
 
     public String getSummary() { return summary; }
     public void setSummary(String summary) { this.summary = summary; }
+
+    public String getCoverImageUrl() { return coverImageUrl; }
+    public void setCoverImageUrl(String coverImageUrl) { this.coverImageUrl = coverImageUrl; }
 
     public List<String> getTags() { return tags; }
     public void setTags(List<String> tags) { this.tags = tags; }

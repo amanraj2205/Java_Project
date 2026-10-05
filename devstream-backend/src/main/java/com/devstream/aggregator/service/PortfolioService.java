@@ -4,12 +4,14 @@ import com.devstream.aggregator.client.AiServiceClient;
 import com.devstream.aggregator.client.GitHubApiClient;
 import com.devstream.aggregator.dto.DeveloperPortfolioResponse;
 import com.devstream.aggregator.dto.GitHubRepoDto;
+import com.devstream.aggregator.dto.UpdatePortfolioRequest;
 import com.devstream.content.dto.ArticleResponse;
 import com.devstream.content.service.ArticleService;
 import com.devstream.identity.model.User;
 import com.devstream.identity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,5 +69,24 @@ public class PortfolioService {
                 .articles(articles)
                 .githubRepositories(githubRepos)
                 .build();
+    }
+
+    @Transactional
+    public DeveloperPortfolioResponse updatePortfolio(String username, UpdatePortfolioRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User profile not found with username: " + username));
+
+        if (request.getBio() != null) {
+            user.setBio(request.getBio());
+        }
+        if (request.getGithubUsername() != null) {
+            user.setGithubUsername(request.getGithubUsername());
+        }
+        if (request.getAvatarUrl() != null) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
+
+        userRepository.save(user);
+        return getDeveloperPortfolio(username);
     }
 }

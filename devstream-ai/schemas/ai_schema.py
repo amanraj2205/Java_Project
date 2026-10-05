@@ -16,3 +16,12 @@ class AutoTagRequest(BaseModel):
 
 class AutoTagResponse(BaseModel):
     tags: List[str] = Field(..., description="Extracted technical tags")
+
+class CodeReviewRequest(BaseModel):
+    code_content: str = Field(..., description="Code snippet or markdown article body to analyze")
+    language: Optional[str] = Field(default="auto", description="Programming language context")
+
+class CodeReviewResponse(BaseModel):
+    review_summary: str = Field(..., description="Overview of code quality analysis")
+    suggestions: List[str] = Field(default_factory=list, description="Actionable optimization suggestions")
+    security_score: int = Field(default=95, description="Automated security & quality rating out of 100")
