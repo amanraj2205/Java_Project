@@ -632,7 +632,7 @@ During **Week 10**, the DevStream engineering team completed the final system ev
 | :--- | :--- | :--- |
 | 📄 **Final Project Report** | Complete Technical Architecture Document, System Requirements Specification (SRS), and Evaluation Metrics | [View Project Report (PDF)](https://drive.google.com/file/d/1pFmduew7up6oNzZ0_X2YcEbCZNrLNfrp/view?usp=drive_link) \| [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
 | 📊 **Presentation Deck (PPT)** | 20-Slide B.Tech Final Project Evaluation Deck covering System Design, Polyglot DB, AI Microservice & Testing | [View Presentation (PPT / Slides)](https://drive.google.com/file/d/1vyoF--WzF5YZf_zW_lc82_3CWRGLDBO1/view?usp=drive_link) |
-| 🎥 **Video Demonstration** | HD Video Walkthrough of DevStream Platform (Author Workflow, AI Summarizer, Live GitHub Portfolio & Moderator Panel) | [Watch Video Demonstration (YouTube)](https://www.youtube.com/watch?v=DevStream_Demo_Week10) \| [Drive Video Link](https://drive.google.com/file/d/1DevStream_Week10_Video_Demo/view?usp=sharing) |
+| 🎥 **Video Demonstration** | HD Video Walkthrough of DevStream Platform (Author Workflow, AI Summarizer, Live GitHub Portfolio & Moderator Panel) | [Watch Video Demonstration (YouTube)](https://www.youtube.com/watch?v=DevStream_Demo_Week10) \| [Drive Video Link](https://drive.google.com/file/d/1C6V8o4NL6FSTMm4dw5IOK83lI_o6LncL/view?usp=drive_link) |
 
 ---
 
@@ -665,7 +665,7 @@ During **Week 10**, the DevStream engineering team completed the final system ev
   * **Live Developer Portfolio:** Real-time rendering of user articles, skill badges, and pinned GitHub repositories.
   * **Moderator Control Center:** Administrative flagging, article visibility toggles, and user management audit logs.
 
-  * View our [Final Video](https://docs.google.com/your-link-here).
+  * View our [Final Video](https://drive.google.com/file/d/1C6V8o4NL6FSTMm4dw5IOK83lI_o6LncL/view?usp=drive_link).
 
 #### 4. Containerization & Deployment Audit
 * Finalized `docker-compose.yml` for single-command environment provisioning.
