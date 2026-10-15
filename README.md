@@ -630,8 +630,9 @@ During **Week 10**, the DevStream engineering team completed the final system ev
 
 | Deliverable | Description | Resource Link |
 | :--- | :--- | :--- |
-| 📄 **Final Project Report** | Complete Technical Architecture Document, System Requirements Specification (SRS), and Evaluation Metrics | [View Project Report (PDF)](https://drive.google.com/file/d/1pFmduew7up6oNzZ0_X2YcEbCZNrLNfrp/view?usp=drive_link) \| [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
-| 📊 **Presentation Deck (PPT)** | 20-Slide B.Tech Final Project Evaluation Deck covering System Design, Polyglot DB, AI Microservice & Testing | [View Presentation (PPT / Slides)](https://drive.google.com/file/d/1vyoF--WzF5YZf_zW_lc82_3CWRGLDBO1/view?usp=drive_link) |
+| 📄 **Final Project Report** | Complete Technical Architecture Document, System Requirements Specification (SRS), and Evaluation Metrics | [View Project Report (PDF)](https://drive.google.com/file/d/1pFmduew7up6oNzZ0_X2YcEbCZNrLNfrp/view?usp=drive_link) \|
+[View Project Report (Word)](https://docs.google.com/document/d/1lRoPgcNxonbJuOoUuEGkOMti2GqL6hB3/edit?usp=drivesdk&ouid=103518369814564026970&rtpof=true&sd=true) \|[`ARCHITECTURE.md`](./ARCHITECTURE.md) |
+| 📊 **Presentation Deck (PPT)** | 20-Slide B.Tech Final Project Evaluation Deck covering System Design, Polyglot DB, AI Microservice & Testing | [View Presentation (PPT / Slides)](https://docs.google.com/presentation/d/14bpMW-Pj7s70RO6QFh0u1ZXAvwHCGn4-/edit?usp=drivesdk&ouid=103518369814564026970&rtpof=true&sd=truek) |
 | 🎥 **Video Demonstration** | HD Video Walkthrough of DevStream Platform (Author Workflow, AI Summarizer, Live GitHub Portfolio & Moderator Panel) | [Watch Video Demonstration (YouTube)](https://www.youtube.com/watch?v=DevStream_Demo_Week10) \| [Drive Video Link](https://drive.google.com/file/d/1C6V8o4NL6FSTMm4dw5IOK83lI_o6LncL/view?usp=drive_link) |
 
 ---
